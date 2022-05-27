@@ -1,0 +1,18 @@
+global:
+  # The smarthost and SMTP sender used for mail notifications.
+  smtp_smarthost: 'smtp-servername:25'
+  smtp_from: 'noreply.@xxx.com'
+  smtp_require_tls: false
+
+route:
+  receiver: email
+  group_interval: 1m
+
+receivers:
+  - name: 'email'
+    email_configs:
+      - to: 'abc@xxx.com'
+        send_resolved: true
+        headers:
+          subject: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ .CommonLabels.severity | toUpper }} {{ .CommonLabels.alertname }} {{ .CommonLabels.instance }} {{ .CommonLabels.job }}'
+          importance: 'high'
